@@ -9,6 +9,7 @@ public class Transaction {
 		this.amount = amount;
 		this.transactionType = transactionType;
 	}
+	
 	public Transaction(int transactionId, float amount, String transactionType) {
 		super();
 		this.transactionId = transactionId;

@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.cg.banking.beans.Account;
+import com.cg.banking.beans.Transaction;
 import com.cg.banking.util.ConnectionProvider;
 
 public class AccountDAOImpl implements AccountDAO {
@@ -30,6 +33,7 @@ public class AccountDAOImpl implements AccountDAO {
 			return accountNo;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return 0;
@@ -58,21 +62,100 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 	
 	@Override
-	public boolean updateAccount(long accountNo, float accountBalance,String status, int pinNumber){
+	public boolean updateAccount(long accountNo, float accountBalance,String status,int pinNumber){
 		try{
 			conn.setAutoCommit(false);
-			String sql = "UPDATE accountdetails SET accountBalance="+accountBalance+", status="+status+"pinNumber="+pinNumber+"where accountNo="+accountNo;
-			PreparedStatement pstmt1 = conn.prepareStatement(sql);
-			/*PreparedStatement pstmt1 = conn.prepareStatement("UPDATE TABLE accountdetails SET accountBalance=?,status=?,pinNumber=? where accountNo="+accountNo);
+			PreparedStatement pstmt1 = conn.prepareStatement("UPDATE accountdetails SET accountBalance=?,status=?,pinNumber=? where accountNo=?");
 			pstmt1.setFloat(1, accountBalance);
 			pstmt1.setString(2, status);
-			pstmt1.setInt(3, pinNumber);*/
-			pstmt1.executeUpdate(sql);
+			pstmt1.setInt(3, pinNumber);
+			pstmt1.setLong(4,accountNo);
+			pstmt1.executeUpdate();
+			conn.commit();
 			return true;
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	@Override
+	public Transaction saveTransaction(float amount, String transactionType, long accountNo) {
+		// TODO Auto-generated method stub
+		try{
+			conn.setAutoCommit(false);
+			PreparedStatement pstmt1 = conn.prepareStatement("INSERT INTO Transactions(transactionId,amount,transactionType,accountNo) values(transactionsId.nextval,?,?,?)");
+			pstmt1.setFloat(1, amount);
+			pstmt1.setString(2, transactionType);
+			pstmt1.setLong(3, accountNo);
+			pstmt1.executeUpdate();
+			
+			PreparedStatement pstmt2 = conn.prepareStatement("SELECT max(transactionId) from Transactions");
+			ResultSet rs= pstmt2.executeQuery();
+			rs.next();
+			int transactionId = rs.getInt(1);
+			
+			
+			Transaction transaction = new Transaction(transactionId, amount, transactionType);
+			conn.commit();
+			return transaction;
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	@Override
+	public List<Account> findAllAccount() {
+		// TODO Auto-generated method stub
+		try{
+			conn.setAutoCommit(false);
+			PreparedStatement pstmt1= conn.prepareStatement("SELECT * from accountdetails");
+			ResultSet rs= pstmt1.executeQuery();
+			List<Account> accountList = new ArrayList<Account>();
+			while(rs.next()){
+				   String accountType = rs.getString("accountType");
+			       float accountBalance =rs.getFloat("accountBalance");
+			       int pinNumber = rs.getInt("pinNumber");
+			       String status =rs.getString("status"); 
+			       long accountNo = rs.getLong("accountNo");
+			       Account account = new Account(pinNumber, accountType, status, accountBalance, accountNo);
+			       accountList.add(account);
+			}						
+			return accountList;
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	@Override
+	public List<Transaction> findAllTransaction(long accountNo) {
+		// TODO Auto-generated method stub
+		try{
+			conn.setAutoCommit(false);
+			PreparedStatement pstmt1= conn.prepareStatement("SELECT * from Transactions where accountNo=?"+accountNo);
+			ResultSet rs= pstmt1.executeQuery();
+			List<Transaction> transactionList = new ArrayList<Transaction>();
+			while(rs.next()){
+					int transactionId = rs.getInt("(TRANSACTIONID");
+					float amount = rs.getFloat("AMOUNT");
+					String transactionType = rs.getString("TRANSACTIONTYPE");
+					Transaction transaction =new Transaction(transactionId, amount, transactionType);
+					transactionList.add(transaction);
+				   /*int  accountType = rs.getString("accountType");
+			       float accountBalance =rs.getFloat("accountBalance");
+			       int pinNumber = rs.getInt("pinNumber");
+			       String status =rs.getString("status"); 
+			       long accountNo = rs.getLong("accountNo");*/
+			     /*  Account account = new Account(pinNumber, accountType, status, accountBalance, accountNo);
+			       accountList.add(account);*/
+			}						
+			return transactionList;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

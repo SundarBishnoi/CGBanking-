@@ -48,4 +48,10 @@ public class Account {
 	public void setAccountNo(long accountNo) {
 		this.accountNo = accountNo;
 	}
+	@Override
+	public String toString() {
+		return "Account [pinNumber=" + pinNumber + ", accountType=" + accountType + ", status=" + status
+				+ ", accountBalance=" + accountBalance + ", accountNo=" + accountNo + "]";
+	}
+	
 }
