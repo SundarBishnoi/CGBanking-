@@ -21,7 +21,6 @@ public class ConnectionProvider {
 			Class.forName(driver);
 			conn=DriverManager.getConnection(url,user,password);
 			return conn;
-			
 		}
 		catch(IOException e){
 			e.printStackTrace();

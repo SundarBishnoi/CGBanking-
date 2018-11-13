@@ -80,7 +80,6 @@ public class MainClass {
 		}
 		else if(var==6) {
 			List<Account> accountList = bankingServices.getAllAccountDetails();
-			
 			for (Account account2 : accountList) {
 			System.out.println(account2.toString());
 			}

@@ -11,6 +11,7 @@ import com.cg.banking.beans.Account;
 import com.cg.banking.beans.Transaction;
 import com.cg.banking.util.ConnectionProvider;
 
+
 public class AccountDAOImpl implements AccountDAO {
 	private Connection conn=ConnectionProvider.getDBConnection();
 	@Override
@@ -135,22 +136,15 @@ public class AccountDAOImpl implements AccountDAO {
 		// TODO Auto-generated method stub
 		try{
 			conn.setAutoCommit(false);
-			PreparedStatement pstmt1= conn.prepareStatement("SELECT * from Transactions where accountNo=?"+accountNo);
+			PreparedStatement pstmt1= conn.prepareStatement("SELECT * from TRANSACTIONS where accountNo="+accountNo);
 			ResultSet rs= pstmt1.executeQuery();
 			List<Transaction> transactionList = new ArrayList<Transaction>();
 			while(rs.next()){
-					int transactionId = rs.getInt("(TRANSACTIONID");
-					float amount = rs.getFloat("AMOUNT");
-					String transactionType = rs.getString("TRANSACTIONTYPE");
+					int transactionId = rs.getInt(1);
+					float amount = rs.getFloat(2);
+					String transactionType = rs.getString(3);
 					Transaction transaction =new Transaction(transactionId, amount, transactionType);
 					transactionList.add(transaction);
-				   /*int  accountType = rs.getString("accountType");
-			       float accountBalance =rs.getFloat("accountBalance");
-			       int pinNumber = rs.getInt("pinNumber");
-			       String status =rs.getString("status"); 
-			       long accountNo = rs.getLong("accountNo");*/
-			     /*  Account account = new Account(pinNumber, accountType, status, accountBalance, accountNo);
-			       accountList.add(account);*/
 			}						
 			return transactionList;
 		}catch (SQLException e) {
