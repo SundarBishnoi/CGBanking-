@@ -23,14 +23,12 @@ public class AccountDAOImpl implements AccountDAO {
 		EntityManager em =emf.createEntityManager();
 		em.getTransaction().begin();
 		em.persist(account);																				//Data to be saved into the table of database..
-		
 		em.getTransaction().commit();
 		em.close();
 		return account;
 		}
 	@Override
 	public Account findAccount(long accountNo) {
-		// TODO Auto-generated method stub
 		EntityManager em =emf.createEntityManager();
 		return em.find(Account.class, accountNo);
 	}
@@ -61,7 +59,6 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 	@Override
 	public List<Account> findAllAccount() {
-		// TODO Auto-generated method stub
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 		List<Account> accountDetails = em.createQuery("SELECT p FROM Account p").getResultList();

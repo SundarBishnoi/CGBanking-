@@ -24,13 +24,13 @@ public class BankingServicesImpl implements BankingServices {
 	@Override
 	public long openAccount(String accountType, float initBalance)
 			throws InvalidAmountException, InvalidAccountTypeException, BankingServicesDownException {
-		// TODO Auto-generated method stub
 		float accountBalance = initBalance;
 		String status = "Active";
-		//account.setAccountBalance(initBalance);
 		int pinNumber=(int)(Math.random()*9000)+1000;
 		Account account =new Account(pinNumber, accountType, status, accountBalance);
 		Account account1 =accountDAO.saveAccountOpen(account);
+		Transaction transaction = new Transaction(accountBalance, "Credit", account1);
+		accountDAO.saveTransaction(transaction);
 		return account1.getAccountNo();
 	}
 	@Override
@@ -53,7 +53,6 @@ public class BankingServicesImpl implements BankingServices {
 	@Override
 	        public float withdrawAmount(long accountNo, float amount, int pinNumber) throws InsufficientAmountException,
 			AccountNotFoundException, InvalidPinNumberException, BankingServicesDownException, AccountBlockedException {
-		// TODO Auto-generated method stub
 		    Account account = accountDAO.findAccount(accountNo);
 		    if(account==null) throw new AccountNotFoundException("Invalid Account Number or Pin Number");
 		    float accountBalance = account.getAccountBalance();
@@ -73,7 +72,6 @@ public class BankingServicesImpl implements BankingServices {
 	public boolean fundTransfer(long accountNoTo, long accountNoFrom, float transferAmount, int pinNumber)
 			throws InsufficientAmountException, AccountNotFoundException, InvalidPinNumberException,
 			BankingServicesDownException, AccountBlockedException {
-		// TODO Auto-generated method stub
 		Account account1 = accountDAO.findAccount(accountNoFrom);
 		Account account2 = accountDAO.findAccount(accountNoTo);
 		if(account1==null){
@@ -105,7 +103,6 @@ public class BankingServicesImpl implements BankingServices {
 	}
 	@Override
 	public Account getAccountDetails(long accountNo) throws AccountNotFoundException, BankingServicesDownException {
-		// TODO Auto-generated method stub
 		Account account = accountDAO.findAccount(accountNo);
 		if(account==null) throw new AccountNotFoundException("Invalid Account Number");
 		return account;
@@ -113,15 +110,12 @@ public class BankingServicesImpl implements BankingServices {
 
 	@Override
 	public List<Account> getAllAccountDetails() throws BankingServicesDownException {
-		// TODO Auto-generated method stub
 		return accountDAO.findAllAccount();
-		
 	}
 
 	@Override
 	public List<Transaction> getAccountAllTransaction(long accountNo)
 			throws BankingServicesDownException, AccountNotFoundException {
-		// TODO Auto-generated method stub
 		Account account = accountDAO.findAccount(accountNo);
 		if(account==null) throw new AccountNotFoundException("Invalid Account  no");
 		return accountDAO.findAllTransaction(accountNo);
@@ -129,7 +123,6 @@ public class BankingServicesImpl implements BankingServices {
 	@Override
 	public String accountStatus(long accountNo)
 			throws BankingServicesDownException, AccountNotFoundException, AccountBlockedException {
-		// TODO Auto-generated method stub
 		Account account = accountDAO.findAccount(accountNo);
 		if(account==null) throw new AccountNotFoundException("Invalid Account  no");
 		String status = account.getStatus();
